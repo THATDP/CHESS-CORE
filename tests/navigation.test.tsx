@@ -33,14 +33,15 @@ describe('etapa 2 · cabeçalho e dropdowns', () => {
     render(<App />);
 
     fireEvent.click(within(nav()).getByRole('button', { name: 'Treinar' }));
-    const panel = within(nav()).getByRole('region', { name: 'Treinar' });
+    const panel = document.getElementById('nav-panel-treinar');
+    if (!panel) throw new Error('O painel da categoria não abriu.');
     const current = within(panel).getByRole('link', { name: /Quebra-cabeças/ });
     expect(current.getAttribute('href')).toBe('#/quebra-cabecas');
     expect(current.getAttribute('aria-current')).toBe('page');
 
     fireEvent.click(within(nav()).getByRole('button', { name: 'Estudar' }));
-    expect(within(nav()).queryByRole('region', { name: 'Treinar' })).toBeNull();
-    expect(within(nav()).getByRole('region', { name: 'Estudar' })).toBeTruthy();
+    expect(document.getElementById('nav-panel-treinar')).toBeNull();
+    expect(document.getElementById('nav-panel-estudar')).toBeTruthy();
   });
 
   it('fecha o dropdown com ESC e devolve o foco ao gatilho', () => {

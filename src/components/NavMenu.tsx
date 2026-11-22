@@ -74,8 +74,6 @@ export function NavMenu({ current, openId, onToggle, onClose }: MenuProps) {
               <div
                 id={`nav-panel-${category.id}`}
                 className={`nav-panel ${index >= lastCentered ? 'nav-panel--right' : ''}`}
-                role="region"
-                aria-label={category.label}
               >
                 <div className="nav-panel__head">
                   <span className="nav-panel__eyebrow">
