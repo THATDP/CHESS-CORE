@@ -1,10 +1,12 @@
 # CHESS CORE
 
-**The heart of chess.** Interface de uma futura plataforma de xadrez. A experiência é uma cena 3D em tempo real — tabuleiro em perspectiva, peças de obsidiana e marfim, luz cinematográfica e névoa — com doze seções navegáveis e configuração de partida demonstrativa. As escolhas não iniciam uma partida. Não há partidas jogáveis, regras, contas, IA ou multiplayer.
+**The heart of chess.** Interface de uma plataforma de xadrez. A cena 3D em tempo real — tabuleiro em perspectiva, peças de obsidiana e marfim, luz cinematográfica e névoa — convive com o **tabuleiro 2D Classic Walnut**, onde partidas locais já rolam de verdade: regras oficiais completas (roque, en passant, promoção, xeque-mate, afogamento, repetição tripla, 50 movimentos e material insuficiente), relógio com incremento, histórico em SAN, desfazer/refazer, desistência e tela de resultado. Não há IA, contas, multiplayer online ou backend.
 
 A cena é construída com three.js + React Three Fiber: geometria, materiais e texturas são procedurais, e o ambiente de reflexão é pré-filtrado em tempo de execução. Sem WebGL, um pôster em CSS 3D preserva a composição.
 
 A navegação é um cabeçalho superior com categorias em dropdown, busca funcional sobre o catálogo de seções, notificações e perfil. Em `Jogar` e `Computador` o cabeçalho assume a forma compacta, com um atalho 2D/3D ao lado do perfil. Em telas estreitas o menu vira um painel com acordeões.
+
+Em `Jogar`, a partida é preparada com adversário (dois jogadores no mesmo dispositivo; motores de xadrez chegam na Fase 5), controle de tempo — sem limite, 1+0, 3+0, 3+2, 5+0, 10+0 e 15+10 — e nome do jogador. O tabuleiro 2D é o padrão e não carrega a cena 3D; a cena continua opcional em `Início`, `Computador` e `Análise`.
 
 ## Início rápido
 
