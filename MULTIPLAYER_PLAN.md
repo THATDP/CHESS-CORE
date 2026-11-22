@@ -1,0 +1,26 @@
+# Multiplayer futuro — planejamento, não implementação
+
+GitHub Pages entrega arquivos estáticos; não é um servidor de partidas. Uma comunicação real exige serviço acessível separadamente ou infraestrutura própria. A comparação abaixo é uma fotografia de referência, não garantia; conferir preços, quotas, requisitos de conta/cartão e termos oficiais antes de qualquer contratação. Nunca habilitar plano pago ou cobrança automática sem autorização.
+
+| Alternativa | Comunicação, persistência e segurança | Grátis e crescimento / configuração |
+| --- | --- | --- |
+| **Supabase Free (recomendação para protótipo)** | Realtime via WebSocket, Postgres e Auth. Realtime é transporte, não árbitro: acesso via RLS e operações privilegiadas autoritativas obrigatórias. | Conta necessária na fase futura; sem integração agora. Referências: 200 conexões de pico e 2 milhões de mensagens/mês, 500 MB de banco por projeto no Free; projetos inativos podem ser pausados. Quotas mudam; validar antes de usar. Não garante alta disponibilidade nem escala gratuita ilimitada. |
+| Firebase Spark | Firestore/Realtime Database sincronizam eventos e persistem dados, com Auth e regras de segurança. A validação autoritativa complexa exige computação confiável; Cloud Functions pode exigir Blaze. | Spark sem cobrança, sujeito a cotas: Realtime Database 100 conexões simultâneas, 1 GB armazenado e 10 GB/mês de download; Firestore tem limites diários de operações. Conta e configuração próprias. Evitar Blaze e dependência de funções pagas. |
+| Cloudflare Workers + Durable Objects Free | WebSockets e estado serializado por objeto; SQLite do objeto para persistência. Permite servidor autoritativo, mas Auth, modelo relacional, backups e operações exigem mais trabalho. | Plano gratuito possui quotas diárias/recursos limitados; verificar condições e exigência de cartão na criação. Conta e implementação de servidor necessárias; limites podem interromper o serviço. |
+| WebRTC P2P | Data channels diretos; ainda precisa de sinalização e possivelmente STUN/TURN. Sem autoridade neutra, persistência e reconexão são difíceis; inadequado para ranking confiável. | Pode ser barato para amigos, mas disponibilidade de sinalização/TURN gratuita não é garantida e redes restritas podem falhar; operação de relay próprio consome recursos. |
+| Servidor próprio WebSocket + banco aberto | Controle total, regras autoritativas, persistência e portabilidade; requer autenticação, TLS, backups e operação. | Software pode ser gratuito, mas máquina, energia, domínio e rede não são necessariamente grátis; não assumir hospedagem gratuita contínua. |
+
+## Recomendação e ressalvas
+
+Para um futuro MVP pequeno, avaliar Supabase Free por combinar Postgres, Auth e Realtime com menor número de serviços. O cliente nunca escreve diretamente movimentos ou resultados confiáveis: uma operação transacional de backend (por exemplo RPC Postgres controlada ou função confiável) deve autenticar o usuário, verificar participante, vez, versão, relógio e legalidade com regras completas, persistir atomicamente e emitir evento. É necessário demonstrar que uma implementação **real** de regras confiáveis cabe no ambiente gratuito escolhido; se não couber, usar backend autoritativo separado, sem prometer custo zero ou produção competitiva. Sem validação autoritativa, limitar a experiência a testes não competitivos, não fingir segurança.
+
+Protocolo futuro: cliente envia comando com ID único e versão esperada; autoridade valida, grava movimento e nova versão em transação, e publica evento; clientes descartam duplicatas, detectam lacunas e recuperam snapshot/histórico após desconexão. Servidor controla relógios e resultado; autenticação, autorização, rate limit e validação de payload são obrigatórios. RLS restringe leituras/escritas, credenciais privilegiadas jamais no navegador. Planejar reconexão, concorrência, abuso, backups/restauração, privacidade, exclusão e auditoria. Testar perda, duplicação, corrida, latência e manipulação.
+
+Ao atingir cotas, limitar acesso ou pausar serviço de forma explícita; não migrar automaticamente para plano pago. Para crescer mantendo R$ 0 será necessário reduzir uso, autohospedar em recursos já disponíveis ou reavaliar o escopo; nenhuma alternativa garante escala, uptime e custo zero simultaneamente. Isolar transporte e persistência atrás de contratos para facilitar migração.
+
+## Fontes oficiais para revalidar
+
+- [Supabase pricing](https://supabase.com/pricing), [Realtime quotas](https://supabase.com/docs/guides/realtime/quotas), [free project pausing](https://supabase.com/docs/guides/platform/going-into-prod#pausing-of-inactive-projects).
+- [Firebase pricing](https://firebase.google.com/pricing), [Realtime Database limits](https://firebase.google.com/docs/database/usage/limits), [Firestore quotas](https://firebase.google.com/docs/firestore/quotas).
+- [Cloudflare Workers limits](https://developers.cloudflare.com/workers/platform/limits/), [Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/), [WebSocket hibernation](https://developers.cloudflare.com/durable-objects/best-practices/websockets/).
+- [WebRTC connectivity](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Connectivity).
