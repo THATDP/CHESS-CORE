@@ -13,6 +13,6 @@ GitHub Pages em repositórios privados depende do plano/elegibilidade do GitHub.
 
 ## Caminhos e navegação
 
-Vite usa `base: './'`, gerando caminhos relativos para JS e CSS tanto na raiz quanto sob o prefixo do repositório. Hoje só existe `index.html`: carregar e atualizar a URL inicial funciona sem fallback. Não há roteamento profundo. Futuras rotas devem usar fragmento ou uma estratégia explícita para o 404 do Pages; base relativa sozinha não resolve URLs HTML5 profundas. Referencie arquivos públicos futuros com `import.meta.env.BASE_URL` ou imports Vite, não com `/` absoluto.
+Vite usa `base: './'`, gerando caminhos relativos para JS e CSS tanto na raiz quanto sob o prefixo do repositório. A aplicação usa `index.html` e navegação por fragmentos (`#/jogar`, por exemplo): carregar e atualizar essas URLs não exige fallback do servidor, pois o fragmento não é enviado ao Pages. Futuras rotas HTML5 profundas exigiriam uma estratégia explícita para o 404; base relativa sozinha não as resolve. Referencie arquivos públicos futuros com `import.meta.env.BASE_URL` ou imports Vite, não com `/` absoluto.
 
 Teste local: `npm run build` e `npm run preview`, abra a URL exibida e atualize. Para simular subdiretório, sirva o conteúdo de `dist` sob um prefixo e verifique carregamento dos assets. Isso não confirma o deploy real. Não comite `dist/`. Consulte [documentação oficial do deploy via Actions](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
