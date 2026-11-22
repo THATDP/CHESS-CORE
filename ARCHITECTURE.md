@@ -2,20 +2,31 @@
 
 ## Princípios
 
-Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A interface inclui navegação por hash, configuração de partida demonstrativa e uma cena original pré-renderizada local (sem motor 3D em tempo de execução); nenhuma funcionalidade de jogo está implementada.
+Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A interface inclui navegação por hash, configuração de partida demonstrativa e uma cena de xadrez **tridimensional em tempo real** (three.js + React Three Fiber), com geometria, materiais e texturas gerados por código — nenhum modelo ou imagem externa é baixado. Nenhuma funcionalidade de jogo está implementada: o tabuleiro e as peças são demonstrativos e não aplicam regras.
 
 ## Organização atual
 
 ```text
 .github/workflows/  CI e publicação
-src/app/            composição e catálogo de navegação
-src/components/     componentes reutilizáveis, incluindo tabuleiro estático
-src/pages/          painel e páginas planejadas
-src/assets/         recursos visuais locais
-src/styles/         estilos e responsividade
+src/app/            composição e catálogo de navegação (12 seções)
+src/components/     componentes de interface, pôster da cena, mini-tabuleiros
+src/pages/          as doze páginas visuais
+src/three/          motor 3D: cena, peças, materiais, texturas, qualidade
+src/styles/         tokens, componentes e responsividade
 src/main.tsx        ponto de entrada
-tests/              testes da interface
+tests/              testes da interface, da geometria e da montagem da cena
 ```
+
+## Cena 3D (Fase 02)
+
+A cena é montada por `Scene` (`src/three/Scene.tsx`) em camadas independentes: iluminação, tabuleiro, peças, cenário de fundo, partículas e pós-processamento. Nada depende de assets externos.
+
+- **Peças** (`pieces.ts` + `pieceProfiles.ts`): silhuetas de torno (lathe) para rei, rainha, torre, bispo e peão; o cavaleiro é uma extrusão com bisel do seu perfil. As mesmas silhuetas geram os ícones SVG da interface (`PieceIcon`), mantendo uma identidade única entre 2D e 3D.
+- **Materiais** (`materials.ts`): obsidiana e marfim em `MeshPhysicalMaterial` com clearcoat; mármore e nogueira procedurais (`textures.ts`) desenhados em canvas. O ambiente de reflexão é pré-filtrado com PMREM a partir de uma "sala" de painéis emissivos (`environment.ts`), sem HDR externo.
+- **Tabuleiro** (`Board.tsx`): moldura arredondada, 64 casas com bisel, filete de esmeralda e interação de hover/seleção demonstrativa.
+- **Composição**: a variante `hero` enquadra o tabuleiro em perspectiva com peças soltas no piso, anéis, peças-fantasma, névoa, poeira e fachos de luz; `board` é o enquadramento de jogo; `ambient` usa peças flutuantes. A câmera tem parallax discreto e se reenquadra em telas estreitas.
+- **Desempenho**: `ChessCanvas` é carregado sob demanda (`React.lazy`) e só monta quando entra na viewport (`SceneSlot`). O nível de qualidade (baixo/médio/alto) reduz sombras, partículas e pós-processamento; `prefers-reduced-motion` desliga parallax, flutuação e as animações de entrada. Sem WebGL, um pôster em CSS 3D assume o lugar (`SceneFallback`).
+- **Pós-processamento**: bloom, grão, vinheta e SMAA via `@react-three/postprocessing`, apenas nos níveis médio e alto.
 
 Arquivos de configuração permanecem na raiz. Diretórios adicionais serão criados **quando houver código real**, evitando estruturas vazias:
 

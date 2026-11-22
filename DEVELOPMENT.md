@@ -17,4 +17,6 @@ npm run build      # valida tipos e gera dist/
 npm run preview    # serve o build localmente
 ```
 
-Os testes em `tests/` usam jsdom e Testing Library; não substituem testes reais de navegação e acessibilidade. CI roda as mesmas verificações. Após mudar dependências, atualize `package-lock.json` e versione-o. `node_modules/`, `dist/`, arquivos de cache TypeScript e `.env` ficam fora do Git. Nunca coloque segredos em variáveis `VITE_`: elas são públicas no build.
+Os testes em `tests/` usam jsdom e Testing Library; não substituem testes reais de navegação e acessibilidade. CI roda as mesmas verificações.
+
+A cena 3D fica em um chunk separado (`ChessCanvas`), carregado com `React.lazy` e montado somente quando entra na viewport (`SceneSlot`). Os testes de cena usam `@react-three/test-renderer` para montar o grafo de three.js sem WebGL, com texturas e pós-processamento substituídos por stubs. Após mudar dependências, atualize `package-lock.json` e versione-o. `node_modules/`, `dist/`, arquivos de cache TypeScript e `.env` ficam fora do Git. Nunca coloque segredos em variáveis `VITE_`: elas são públicas no build.
