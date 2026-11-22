@@ -103,17 +103,23 @@ function extras(role: PieceRole, size: number) {
 
 export type PieceIconProps = {
   role: PieceRole;
+  /** Cor da peça: define o tema (marfim para brancas, nogueira para pretas). */
+  color?: 'white' | 'black';
   className?: string;
   size?: number;
   title?: string;
 };
 
-export function PieceIcon({ role, className, size = 32, title }: PieceIconProps) {
+export function PieceIcon({ role, color, className, size = 32, title }: PieceIconProps) {
   const path = useMemo(() => bodyPath(role, 32), [role]);
   const extra = useMemo(() => extras(role, 32), [role]);
+  const classes = [
+    className ?? '',
+    color ? `piece-icon--${color}` : '',
+  ].filter(Boolean).join(' ');
   return (
     <svg
-      className={className}
+      className={classes}
       width={size}
       height={size}
       viewBox="0 0 32 32"

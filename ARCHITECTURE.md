@@ -2,20 +2,41 @@
 
 ## Princípios
 
-Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A interface inclui navegação por hash, configuração de partida demonstrativa e uma cena de xadrez **tridimensional em tempo real** (three.js + React Three Fiber), com geometria, materiais e texturas gerados por código — nenhum modelo ou imagem externa é baixado. Nenhuma funcionalidade de jogo está implementada: o tabuleiro e as peças são demonstrativos e não aplicam regras.
+Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A interface inclui navegação por hash e uma cena de xadrez **tridimensional em tempo real** (three.js + React Three Fiber), com geometria, materiais e texturas gerados por código — nenhum modelo ou imagem externa é baixado. A partida roda num **tabuleiro 2D** (CSS + SVG, tema Classic Walnut), com regras oficiais completas e relógio; a cena 3D é opcional e não é carregada na partida.
 
 ## Organização atual
 
 ```text
 .github/workflows/  CI e publicação
 src/app/            composição e catálogo de navegação (12 seções)
-src/components/     componentes de interface, pôster da cena, mini-tabuleiros
+src/chess/          regras, partida e relógio (domínio, sem React)
+  game/             tipos de partida, ChessGame, relógio e hook da partida
+  rules.ts          única fronteira com a biblioteca de regras (chess.js)
+src/engines/        registro e contrato de engines (UCI; WASM + Web Worker na Fase 5)
+src/components/     componentes de interface, tabuleiro 2D, painéis, pôster 3D
 src/pages/          as doze páginas visuais
 src/three/          motor 3D: cena, peças, materiais, texturas, qualidade
-src/styles/         tokens, componentes e responsividade
+src/styles/         tokens, componentes, responsividade e tema da partida
 src/main.tsx        ponto de entrada
-tests/              testes da interface, da geometria e da montagem da cena
+tests/              testes de regras, relógio, partida, tabuleiro, engines e cena
 ```
+
+## Partida (Fase 04)
+
+A partida é um problema de domínio, não de componente: `src/chess/` não importa React nem DOM.
+
+- **Regras** (`rules.ts`): adaptador único para `chess.js` 1.4.0. Expõe lances legais por casa, validação de lance (incluindo a proibição de deixar o próprio rei em xeque), detecção de promoção, xeque, desfecho (xeque-mate, afogamento, material insuficiente, repetição tripla e 50 movimentos) e o último lance. Nenhuma outra parte do código conhece a biblioteca.
+- **Partida** (`game/game.ts`): `ChessGame` guarda a posição, o histórico em SAN, o PGN e a pilha de refazer. `undo()`/`redo()` devolvem o SAN afetado; não há pilha de desfazer própria, o histórico da biblioteca é a fonte.
+- **Relógio** (`game/clock.ts`): medido por relógio de parede (`performance.now`), com incremento aplicado ao lado que jogou e ponteiro passado ao adversário. Sem limite, o tempo conta para cima só para exibição. `dispose()` encerra o `setInterval`.
+- **Hook** (`game/useChessGame.ts`): estado da partida para a interface — seleção, alvos legais, promoção pendente, fase, resultado, desfazer/refazer e relógio. O relógio é recriado quando o controle de tempo muda; o componente o descarta ao desmontar.
+- **Tabuleiro** (`components/ChessBoard.tsx`): 64 casas em CSS grid, orientação brancas/pretas, coordenadas, seleção, alvos de lance, anel de captura, última jogada e xeque. Clique e arrastar; teclado entra pela casa focada. Peças via `PieceIcon` (o mesmo SVG dos perfis 3D), com Staunton marfim para brancas e nogueira para pretas.
+- **Painel** (`components/MatchPanel.tsx`): jogadores, relógio, controles (desfazer, refazer, inverter, desistir, empate, reiniciar), resultado e histórico em SAN numerado.
+- **Promoção** (`components/PromotionDialog.tsx`): escolha de dama, torre, bispo ou cavalo.
+- **Controles de tempo**: sem limite, 1+0, 3+0, 3+2, 5+0, 10+0 e 15+10 (`game/types.ts`).
+
+## Engines (Fase 5)
+
+`src/engines/` é o limite entre as regras oficiais e o adversário de IA. O contrato (`protocol.ts`) define `load`, `dispose`, `requestMove`, `setOption`, `status` e `info`; **UCI é o protocolo padrão**, e protocolos diferentes são declarados como `custom`. O registro (`registry.ts`) mapeia id → fábrica, e `createEngine(id)` instancia **uma** engine por vez, sem baixar binário antes da escolha. Na Fase 5 as engines serão WASM em Web Worker, com carregamento individual, encerramento e liberação de memória. `PLANNED_ENGINES` lista Stockfish, Leela Chess Zero, Berserk, Koivisto, Arasan, Lozza, Rodent IV e Fairy-Stockfish — nenhuma é baixada nesta fase. A seção `Jogar` já separa "um amigo neste dispositivo" de "motor de xadrez", deixando a escolha preparada.
 
 ## Cena 3D (Fase 02)
 
@@ -32,7 +53,7 @@ Arquivos de configuração permanecem na raiz. Diretórios adicionais serão cri
 
 - `src/pages/` e `src/navigation/`: páginas e roteamento, quando necessários; componentes de interface compartilhados em `src/components/`.
 - `src/features/<domínio>/`: composição de cada funcionalidade, com suas telas e casos de uso próprios.
-- `src/domain/`: modelos, regras e contratos puros de negócio, sem React, DOM ou SDKs externos. Subdomínios futuros: xadrez, partidas, competição etc.
+- `src/chess/` e `src/engines/`: regras e contrato de adversário já existem — manter domínio puro, sem React, DOM ou SDKs de UI.
 - `src/services/`: adaptadores externos para rede, autenticação, persistência e engine. Dependem dos contratos de domínio, nunca o contrário. Configuração pública em `src/config/`; nunca segredos no frontend.
 - `src/styles/`: tokens e estilos compartilhados; testes de unidade de domínio e integração em `tests/` ou próximos ao módulo.
 

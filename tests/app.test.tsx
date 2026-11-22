@@ -50,19 +50,37 @@ describe('interface demonstrativa', () => {
     expect(screen.getByRole('heading', { name: 'Seu próximo grande desafio.' })).toBeTruthy();
     expect(screen.getByText(/ainda não estão disponíveis/)).toBeTruthy();
   });
-  it('permite selecionar opções demonstrativas sem iniciar partida', () => {
+  it('monta a partida real dentro da aplicação e joga lances', () => {
     window.location.hash = '#/jogar';
     render(<App />);
-    expect((screen.getByRole('radio', { name: /Qualquer pessoa/ }) as HTMLInputElement).checked).toBe(true);
-    fireEvent.click(screen.getByRole('radio', { name: /Um amigo/ }));
-    fireEvent.click(screen.getByRole('radio', { name: /Variantes futuras/ }));
-    fireEvent.click(screen.getByRole('radio', { name: /Blitz/ }));
+    fireEvent.click(screen.getByRole('radio', { name: '5 + 0' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Começar partida' }));
+    const cell = (square: string) => document.querySelector(`[data-square="${square}"]`) as HTMLElement;
+    fireEvent.click(cell('e2'));
+    fireEvent.click(cell('e4'));
+    fireEvent.click(cell('e7'));
+    fireEvent.click(cell('e5'));
+    expect(document.querySelector('.match__moves')?.textContent).toContain('e4');
+    expect(document.querySelector('.match__moves')?.textContent).toContain('e5');
+    expect(screen.getByRole('status').textContent).toBe('Brancas a jogar');
+    fireEvent.click(screen.getByRole('button', { name: 'Desfazer' }));
+    expect(document.querySelector('.match__moves')?.textContent).not.toContain('e5');
+    fireEvent.click(screen.getByRole('button', { name: 'Reiniciar' }));
+    expect(document.querySelectorAll('.board__piece')).toHaveLength(32);
+  });
+
+  it('prepara uma partida real a partir da seção Jogar', () => {
+    window.location.hash = '#/jogar';
+    render(<App />);
     expect((screen.getByRole('radio', { name: /Um amigo/ }) as HTMLInputElement).checked).toBe(true);
-    expect((screen.getByRole('radio', { name: /Variantes futuras/ }) as HTMLInputElement).checked).toBe(true);
-    expect((screen.getByRole('radio', { name: /Blitz/ }) as HTMLInputElement).checked).toBe(true);
-    expect((screen.getByRole('radio', { name: /Rapid/ }) as HTMLInputElement).checked).toBe(false);
-    fireEvent.click(screen.getByRole('button', { name: 'Jogar' }));
-    expect(screen.getByRole('status').textContent).toMatch(/partidas ainda não estão disponíveis/);
+    for (const label of ['Sem limite', '1 + 0', '3 + 0', '3 + 2', '5 + 0', '10 + 0', '15 + 10']) {
+      expect(screen.getByRole('radio', { name: label })).toBeTruthy();
+    }
+    fireEvent.click(screen.getByRole('radio', { name: '5 + 0' }));
+    expect((screen.getByRole('radio', { name: '5 + 0' }) as HTMLInputElement).checked).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Começar partida' }));
+    expect(screen.getByRole('status').textContent).toBe('Brancas a jogar');
+    expect(document.querySelectorAll('.board__cell')).toHaveLength(64);
   });
 });
 
@@ -82,7 +100,7 @@ describe('fase 02 · experiência visual e páginas', () => {
       if (page.id === 'inicio') {
         expect(screen.getByRole('heading', { name: /O jogo começa/ })).toBeTruthy();
       } else if (page.id === 'jogar') {
-        expect(screen.getByRole('heading', { name: /Prepare-se/ })).toBeTruthy();
+        expect(screen.getByRole('heading', { name: 'Partida no tabuleiro' })).toBeTruthy();
       } else if (page.id === 'perfil') {
         expect(screen.getByRole('heading', { name: 'Jogador demo' })).toBeTruthy();
       } else {

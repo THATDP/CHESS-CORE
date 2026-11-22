@@ -178,7 +178,8 @@ describe('etapa 2 · modo compacto e responsivo', () => {
   });
 
   it('preserva menu, configurações e o atalho 2D/3D no cabeçalho compacto', () => {
-    window.location.hash = '#/jogar';
+    // A página de computador mantém a cena 3D opcional; Jogar usa o tabuleiro 2D.
+    window.location.hash = '#/computador';
     render(<App />);
 
     expect(screen.getByRole('link', { name: 'Configurações' })).toBeTruthy();
