@@ -2,7 +2,7 @@
 
 ## Princípios
 
-Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A Fase 02 adiciona uma interface demonstrativa e navegação por hash; nenhuma funcionalidade de jogo está implementada.
+Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A interface inclui navegação por hash, configuração de partida demonstrativa e uma cena original pré-renderizada local (sem motor 3D em tempo de execução); nenhuma funcionalidade de jogo está implementada.
 
 ## Organização atual
 

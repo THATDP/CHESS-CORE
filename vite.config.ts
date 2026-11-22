@@ -5,5 +5,6 @@ export default defineConfig({
   // Assets remain relative to the HTML, whether Pages serves a repository or a root site.
   base: './',
   plugins: [react()],
+  server: { allowedHosts: ['.e2b.app'] },
   test: { environment: 'jsdom', include: ['tests/**/*.test.{ts,tsx}'] },
 });
