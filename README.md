@@ -1,6 +1,6 @@
 # CHESS CORE
 
-**The heart of chess.** Fundação para uma futura plataforma de xadrez, organizada para evoluir sem antecipar as funcionalidades do produto. Esta é somente a Fase 01: a página exibida é um aviso técnico temporário, não uma interface final. Não há tabuleiro, partidas, contas ou multiplayer.
+**The heart of chess.** Interface de uma futura plataforma de xadrez. A Fase 02 apresenta um painel visual, navegação e um tabuleiro estático, com dados fictícios identificados como demonstrativos. Não há partidas jogáveis, regras, contas, IA ou multiplayer.
 
 ## Início rápido
 
@@ -23,4 +23,4 @@ Abra a URL mostrada no terminal. Para validar: `npm run typecheck`, `npm run lin
 - [Desenvolvimento](DEVELOPMENT.md)
 - [Publicação](DEPLOYMENT.md)
 
-A infraestrutura atual não requer serviço pago. GitHub Pages tem limites e condições de elegibilidade; serviços futuros gratuitos também têm cotas. A publicação não ocorre automaticamente até configurar Pages e integrar o workflow à branch `main`.
+A infraestrutura atual não requer serviço pago. GitHub Pages tem limites e condições de elegibilidade; serviços futuros gratuitos também têm cotas. O deploy usa GitHub Actions a partir da branch `main`; consulte as instruções e limitações em [DEPLOYMENT.md](DEPLOYMENT.md).

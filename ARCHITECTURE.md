@@ -2,16 +2,19 @@
 
 ## Princípios
 
-Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A mensagem temporária apenas confirma que a aplicação inicia.
+Uma aplicação estática React/TypeScript construída pelo Vite e servida pelo GitHub Pages. O navegador executa a interface; Pages não executa backend nem WebSockets. Não há servidor, persistência, provedor ou autenticação conectados nesta fase. A Fase 02 adiciona uma interface demonstrativa e navegação por hash; nenhuma funcionalidade de jogo está implementada.
 
 ## Organização atual
 
 ```text
 .github/workflows/  CI e publicação
-src/app/            composição da aplicação
-src/styles/         estilos globais mínimos
+src/app/            composição e catálogo de navegação
+src/components/     componentes reutilizáveis, incluindo tabuleiro estático
+src/pages/          painel e páginas planejadas
+src/assets/         recursos visuais locais
+src/styles/         estilos e responsividade
 src/main.tsx        ponto de entrada
- tests/             testes da fundação
+tests/              testes da interface
 ```
 
 Arquivos de configuração permanecem na raiz. Diretórios adicionais serão criados **quando houver código real**, evitando estruturas vazias:
@@ -26,7 +29,7 @@ Fluxo previsto: interface → casos de uso/contratos de domínio ← adaptadores
 
 ## Navegação e recursos
 
-Atualmente há uma única página, sem roteador. O build usa `base: './'` para funcionar na raiz ou sob `/CHESS-CORE/`. O refresh da URL inicial é compatível com hospedagem estática. Para rotas futuras, preferir hash routing (`#/...`), pois o fragmento não é enviado ao servidor; URLs HTML5 profundas precisariam de solução explícita para 404 no Pages. Recursos futuros devem ser importados pelo Vite ou referenciar `import.meta.env.BASE_URL`; não usar caminhos absolutos `/assets/...`.
+A navegação atual usa fragmentos hash, sem biblioteca de roteamento. O build usa `base: './'` para funcionar na raiz ou sob `/CHESS-CORE/`. O refresh da URL inicial é compatível com hospedagem estática. Para rotas futuras, preferir hash routing (`#/...`), pois o fragmento não é enviado ao servidor; URLs HTML5 profundas precisariam de solução explícita para 404 no Pages. Recursos futuros devem ser importados pelo Vite ou referenciar `import.meta.env.BASE_URL`; não usar caminhos absolutos `/assets/...`.
 
 ## Dados e limites de confiança futuros
 
