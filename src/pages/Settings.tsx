@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Bell, Brush, Download, Gauge, Moon, Sparkles, Trash2 } from 'lucide-react';
+import {
+  Bell, Box, Brush, Download, Gauge, ImageOff, Moon, Navigation2, Sparkles, Trash2,
+} from 'lucide-react';
 import { Badge, Button, Eyebrow, Panel, SectionHeading, Toggle } from '../components/ui';
+import { updateNavPreferences, useNavPreferences } from '../app/preferences';
 
 const accents = [
   { value: 'emerald', label: 'Esmeralda', color: '#3ce6a6' },
@@ -17,6 +20,7 @@ const qualities = [
 ];
 
 export function Settings() {
+  const nav = useNavPreferences();
   const [accent, setAccent] = useState(() => window.localStorage.getItem('cc-accent') ?? 'emerald');
   const [quality, setQuality] = useState(() => window.localStorage.getItem('cc-quality') ?? 'auto');
   const [saved, setSaved] = useState(false);
@@ -47,7 +51,28 @@ export function Settings() {
 
       <div className="settings__grid">
         <Panel className="settings__panel">
-          <SectionHeading index="01 / APARÊNCIA" title="Acento visual" description="Aplica-se imediatamente a toda a interface." />
+          <SectionHeading index="01 / NAVEGAÇÃO" title="Comportamento do cabeçalho" description="A navegação responde a estas escolhas." />
+          <div className="settings__stack">
+            <Toggle
+              checked={nav.pinned}
+              onChange={(pinned) => updateNavPreferences({ pinned })}
+              label="Cabeçalho fixo ao rolar"
+              description="Mantém a navegação visível durante a rolagem."
+            />
+            <Toggle
+              checked={nav.compactMatches}
+              onChange={(compactMatches) => updateNavPreferences({ compactMatches })}
+              label="Modo compacto em partidas"
+              description="Reduz o cabeçalho em Jogar e Computador para sobrar espaço ao tabuleiro."
+            />
+          </div>
+          <p className="settings__hint">
+            <Navigation2 size={13} aria-hidden="true" /> As preferências são aplicadas na hora, inclusive durante uma partida.
+          </p>
+        </Panel>
+
+        <Panel className="settings__panel">
+          <SectionHeading index="02 / APARÊNCIA" title="Acento visual" description="Aplica-se imediatamente a toda a interface." />
           <div className="swatch-row">
             {accents.map((item) => (
               <button
@@ -74,7 +99,7 @@ export function Settings() {
         </Panel>
 
         <Panel className="settings__panel">
-          <SectionHeading index="02 / MOVIMENTO" title="Animação" description="A cena 3D acompanha estas escolhas." />
+          <SectionHeading index="03 / MOVIMENTO" title="Animação" description="A cena 3D acompanha estas escolhas." />
           <div className="settings__stack">
             <Toggle checked={motion} onChange={setMotion} label="Parallax e flutuação" description="Movimento discreto da câmera e das peças" />
             <Toggle checked={effects} onChange={setEffects} label="Brilho e vinheta" description="Pós-processamento cinematográfico" />
@@ -83,7 +108,20 @@ export function Settings() {
         </Panel>
 
         <Panel className="settings__panel">
-          <SectionHeading index="03 / DESEMPENHO" title="Qualidade da cena" description="Controla sombras, partículas e bloom." />
+          <SectionHeading index="04 / CENA E DESEMPENHO" title="Cena 3D" description="Liga ou desliga o ambiente tridimensional em tempo real." />
+          <div className="settings__stack">
+            <Toggle
+              checked={nav.scene3d}
+              onChange={(scene3d) => updateNavPreferences({ scene3d })}
+              label="Cena 3D em tempo real"
+              description={nav.scene3d ? 'Tabuleiro, peças e luz renderizados no navegador.' : 'O pôster estilizado assume o lugar da cena.'}
+            />
+            <div className="scene-state" aria-hidden="true">
+              {nav.scene3d ? <Box size={16} /> : <ImageOff size={16} />}
+              <span>{nav.scene3d ? 'Cena ativa' : 'Cena desativada'}</span>
+            </div>
+          </div>
+
           <div className="quality-list">
             {qualities.map((item) => (
               <label key={item.value} className={`quality ${quality === item.value ? 'is-selected' : ''}`}>
@@ -99,7 +137,7 @@ export function Settings() {
         </Panel>
 
         <Panel className="settings__panel">
-          <SectionHeading index="04 / NOTIFICAÇÕES" title="Avisos" description="Nada é enviado nesta fase." />
+          <SectionHeading index="05 / NOTIFICAÇÕES" title="Avisos" description="Nada é enviado nesta fase." />
           <div className="settings__stack">
             <Toggle checked={notifications} onChange={setNotifications} label="Convites de partida" description="Quando alguém quiser jogar com você" />
             <Toggle checked={weekly} onChange={setWeekly} label="Resumo semanal" description="Um retrato da sua evolução" />
@@ -107,7 +145,7 @@ export function Settings() {
         </Panel>
 
         <Panel className="settings__panel">
-          <SectionHeading index="05 / PRIVACIDADE" title="Sua presença" description="Controles demonstrativos." />
+          <SectionHeading index="06 / PRIVACIDADE" title="Sua presença" description="Controles demonstrativos." />
           <div className="settings__stack">
             <Toggle checked={publicProfile} onChange={setPublicProfile} label="Perfil público" description="Visível para outros jogadores" />
             <Toggle checked={shareActivity} onChange={setShareActivity} label="Compartilhar atividade" description="Mostre quando você está online" />
@@ -115,7 +153,7 @@ export function Settings() {
         </Panel>
 
         <Panel className="settings__panel">
-          <SectionHeading index="06 / DADOS" title="Seus dados" description="Nada é persistido nesta fase." />
+          <SectionHeading index="07 / DADOS" title="Seus dados" description="Nada é persistido nesta fase." />
           <div className="settings__actions">
             <Button variant="outline" size="sm"><Download size={15} aria-hidden="true" /> Exportar demonstração</Button>
             <Button variant="outline" size="sm"><Trash2 size={15} aria-hidden="true" /> Limpar preferências</Button>

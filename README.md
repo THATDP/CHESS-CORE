@@ -4,6 +4,8 @@
 
 A cena é construída com three.js + React Three Fiber: geometria, materiais e texturas são procedurais, e o ambiente de reflexão é pré-filtrado em tempo de execução. Sem WebGL, um pôster em CSS 3D preserva a composição.
 
+A navegação é um cabeçalho superior com categorias em dropdown, busca funcional sobre o catálogo de seções, notificações e perfil. Em `Jogar` e `Computador` o cabeçalho assume a forma compacta, com um atalho 2D/3D ao lado do perfil. Em telas estreitas o menu vira um painel com acordeões.
+
 ## Início rápido
 
 Requisitos: Node.js 22.12+ (recomendado Node 22 LTS), npm e Git. Não é necessário cartão, conta externa ou arquivo de ambiente para desenvolver localmente.

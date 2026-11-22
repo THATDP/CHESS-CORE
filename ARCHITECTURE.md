@@ -38,6 +38,18 @@ Arquivos de configuração permanecem na raiz. Diretórios adicionais serão cri
 
 Fluxo previsto: interface → casos de uso/contratos de domínio ← adaptadores de infraestrutura. A lógica de xadrez deverá ser isolada e testável, sem depender de telas ou transporte; IA deverá usar um adaptador para worker/engine, sem incluir Stockfish agora. Para multiplayer, o backend futuro será autoridade; o cliente não decide resultados competitivos. As interfaces serão definidas quando os casos de uso forem conhecidos, evitando abstrações especulativas.
 
+## Sistema de navegação (Etapa 2)
+
+A navegação é um cabeçalho superior — não uma barra lateral. O catálogo de páginas e a hierarquia de categorias vivem em `src/app/navigation.ts`; adicionar uma seção é incluir uma entrada em `pages` e, se necessário, uma categoria em `navCategories`, sem tocar em componentes.
+
+- **Cabeçalho** (`src/components/Header.tsx`): três regiões — marca (esquerda), navegação central (centro) e ações (direita). É fixo durante a rolagem por padrão, com desfoque aplicado num plano próprio (`::before`) para que os painéis continuem ancorados no gatilho.
+- **Dropdowns** (`src/components/NavMenu.tsx`): categorias com descrição, itens com ícone e indicação da seção atual. Abrir um fecha o anterior; ESC e clique fora fecham; a seleção de uma opção fecha. O gatilho mantém `aria-expanded` e o painel usa `aria-controls`.
+- **Busca** (`src/components/SearchPanel.tsx`): filtra o próprio catálogo por rótulo, título e palavras-chave, com normalização de acentos e setas do teclado. Nenhum resultado inventado.
+- **Painéis** (`src/components/Popover.tsx`): primitivo de painel ancorado usado por busca, notificações e perfil, com fechamento por clique fora/ESC e retorno de foco ao gatilho.
+- **Modo compacto**: `matchPages` em `navigation.ts` define os contextos de partida (`jogar`, `computador`). Nessas páginas o cabeçalho reduz a altura, omite os dropdowns e mantém marca, contexto, menu, configurações, perfil e o atalho 2D/3D.
+- **Preferências** (`src/app/preferences.ts`): cabeçalho fixo, modo compacto em partidas e cena 3D ligada/desligada, persistidas em `localStorage` e propagadas por evento. A cena 3D desligada mantém o pôster estilizado (`SceneSlot`).
+- **Responsivo**: acima de 1120px o cabeçalho usa `grid` `1fr auto 1fr` para centralizar a navegação; abaixo disso o menu expansível (`NavDrawer`) assume, com busca, atalhos e as categorias em acordeões.
+
 ## Navegação e recursos
 
 A navegação atual usa fragmentos hash, sem biblioteca de roteamento. O build usa `base: './'` para funcionar na raiz ou sob `/CHESS-CORE/`. O refresh da URL inicial é compatível com hospedagem estática. Para rotas futuras, preferir hash routing (`#/...`), pois o fragmento não é enviado ao servidor; URLs HTML5 profundas precisariam de solução explícita para 404 no Pages. Recursos futuros devem ser importados pelo Vite ou referenciar `import.meta.env.BASE_URL`; não usar caminhos absolutos `/assets/...`.

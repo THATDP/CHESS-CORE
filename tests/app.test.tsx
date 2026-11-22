@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../src/app/App';
-import { pages } from '../src/app/navigation';
+import { navCategories, pages } from '../src/app/navigation';
 
 afterEach(() => {
   cleanup();
@@ -17,17 +17,25 @@ describe('interface demonstrativa', () => {
     expect(screen.getByRole('link', { name: /Preparar partida/ }).getAttribute('href')).toBe('#/jogar');
     expect(screen.getByText(/em construção/)).toBeTruthy();
   });
-  it('disponibiliza todas as seções por links hash compatíveis com Pages', () => {
+  it('expõe todas as seções por links hash compatíveis com Pages', () => {
     render(<App />);
     const nav = screen.getByRole('navigation', { name: 'Navegação principal' });
-    for (const page of pages.slice(0, 10)) expect(within(nav).getByRole('link', { name: page.label }).getAttribute('href')).toBe(`#/${page.id}`);
+    expect(within(nav).getByRole('link', { name: 'Início' }).getAttribute('href')).toBe('#/inicio');
+    for (const page of pages.filter((item) => item.id !== 'inicio')) {
+      const category = navCategories.find((item) => item.id === page.category);
+      fireEvent.click(within(nav).getByRole('button', { name: category?.label ?? page.label }));
+      const link = within(nav).getAllByRole('link').find((node) => node.getAttribute('href') === `#/${page.id}`);
+      expect(link).toBeTruthy();
+      expect(link?.textContent).toContain(page.label);
+    }
   });
-  it('abre o menu demonstrativo de perfil e permite recolher a barra', () => {
+  it('abre o menu demonstrativo de perfil e o menu de navegação', () => {
     render(<App />);
     fireEvent.click(screen.getByRole('button', { name: /Jogador demo/ }));
     expect(screen.getByText(/perfil é fictício/)).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Recolher barra lateral' }));
-    expect(screen.getByRole('button', { name: 'Expandir barra lateral' })).toBeTruthy();
+    fireEvent.keyDown(screen.getByRole('button', { name: /Jogador demo/ }), { key: 'Escape' });
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }));
+    expect(screen.getByRole('dialog', { name: 'Menu de navegação' })).toBeTruthy();
   });
   it('altera a página quando a navegação hash muda', () => {
     vi.stubGlobal('scrollTo', vi.fn());
