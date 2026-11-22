@@ -1,23 +1,79 @@
 import { useEffect, useState } from 'react';
-import { ChevronDown, Menu, Settings2 } from 'lucide-react';
 import { Sidebar } from '../components/Sidebar';
-import { Dashboard } from '../pages/Dashboard';
-import { PlannedPage } from '../pages/PlannedPage';
-import { Play } from '../pages/Play';
+import { Topbar } from '../components/Topbar';
 import { pageForHash } from './navigation';
+import type { Page } from './navigation';
+import { Home } from '../pages/Home';
+import { Play } from '../pages/Play';
+import { Computer } from '../pages/Computer';
+import { Training } from '../pages/Training';
+import { Puzzles } from '../pages/Puzzles';
+import { Analysis } from '../pages/Analysis';
+import { Tournaments } from '../pages/Tournaments';
+import { Learning } from '../pages/Learning';
+import { Friends } from '../pages/Friends';
+import { History } from '../pages/History';
+import { Profile } from '../pages/Profile';
+import { Settings } from '../pages/Settings';
+
+function renderPage(page: Page) {
+  switch (page.id) {
+    case 'inicio': return <Home />;
+    case 'jogar': return <Play />;
+    case 'computador': return <Computer />;
+    case 'treinamento': return <Training />;
+    case 'quebra-cabecas': return <Puzzles />;
+    case 'analise': return <Analysis />;
+    case 'torneios': return <Tournaments />;
+    case 'aprendizado': return <Learning />;
+    case 'amigos': return <Friends />;
+    case 'historico': return <History />;
+    case 'perfil': return <Profile />;
+    case 'configuracoes': return <Settings />;
+    default: return <Home />;
+  }
+}
 
 export function App() {
   const [page, setPage] = useState(() => pageForHash(window.location.hash));
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
   useEffect(() => {
-    const update = () => { setPage(pageForHash(window.location.hash)); setProfileOpen(false); window.scrollTo?.(0, 0); };
+    const update = () => {
+      setPage(pageForHash(window.location.hash));
+      setProfileOpen(false);
+      window.scrollTo?.(0, 0);
+    };
     window.addEventListener('hashchange', update);
     return () => window.removeEventListener('hashchange', update);
   }, []);
-  return <div className={`app-shell ${collapsed ? 'app-shell--collapsed' : ''}`}>
-    <Sidebar current={page.id} collapsed={collapsed} mobileOpen={mobileOpen} onCollapse={() => setCollapsed(!collapsed)} onClose={() => setMobileOpen(false)}/>
-    <div className="app-main"><header className="topbar"><div className="breadcrumb"><button className="icon-button mobile-menu" onClick={() => setMobileOpen(true)} aria-label="Abrir menu"><Menu size={20}/></button><span className="breadcrumb-home">CHESS CORE</span><span className="breadcrumb-slash">/</span><strong>{page.label}</strong></div><div className="top-actions"><span className="demo-header"><span className="status-dot"/> MODO DEMONSTRAÇÃO</span><a className="icon-button settings-link" href="#/configuracoes" aria-label="Configurações"><Settings2 size={18}/></a><div className="top-divider"/><div className="profile-wrap"><button className="profile-button" aria-expanded={profileOpen} onClick={() => setProfileOpen(!profileOpen)}><span className="avatar">JD</span><span className="profile-copy"><strong>Jogador demo</strong><small>Conta demonstrativa</small></span><ChevronDown size={15}/></button>{profileOpen && <div className="profile-menu"><span>AMBIENTE DEMONSTRATIVO</span><p>Este perfil é fictício e não possui conta real.</p><a href="#/perfil">Ver perfil <ChevronDown size={14}/></a><a href="#/configuracoes">Configurações <ChevronDown size={14}/></a></div>}</div></div></header><main className="content" key={page.id}>{page.id === 'inicio' ? <Dashboard/> : page.id === 'jogar' ? <Play/> : <PlannedPage page={page}/>}</main><footer className="footer"><span>© CHESS CORE <span>·</span> THE HEART OF CHESS.</span><span>PROJETADO PARA O SEU PRÓXIMO MOVIMENTO <span>✳</span></span></footer></div>
-  </div>;
+
+  return (
+    <div className={`app-shell ${collapsed ? 'app-shell--collapsed' : ''}`}>
+      <Sidebar
+        current={page.id}
+        collapsed={collapsed}
+        mobileOpen={mobileOpen}
+        onCollapse={() => setCollapsed(!collapsed)}
+        onClose={() => setMobileOpen(false)}
+      />
+      <div className="app-main">
+        <Topbar
+          page={page}
+          onMenu={() => setMobileOpen(true)}
+          profileOpen={profileOpen}
+          onProfile={() => setProfileOpen(!profileOpen)}
+        />
+        <main className="content" key={page.id}>
+          {renderPage(page)}
+        </main>
+        <footer className="footer">
+          <span>© CHESS CORE <span aria-hidden="true">·</span> THE HEART OF CHESS.</span>
+          <span>PROJETADO PARA O SEU PRÓXIMO MOVIMENTO <span aria-hidden="true">✳</span></span>
+        </footer>
+      </div>
+    </div>
+  );
 }

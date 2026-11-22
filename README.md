@@ -1,6 +1,8 @@
 # CHESS CORE
 
-**The heart of chess.** Interface de uma futura plataforma de xadrez. A interface apresenta uma cena de xadrez pré-renderizada, navegação e configuração de partida demonstrativa; as escolhas não iniciam uma partida. Não há partidas jogáveis, regras, contas, IA ou multiplayer.
+**The heart of chess.** Interface de uma futura plataforma de xadrez. A experiência é uma cena 3D em tempo real — tabuleiro em perspectiva, peças de obsidiana e marfim, luz cinematográfica e névoa — com doze seções navegáveis e configuração de partida demonstrativa. As escolhas não iniciam uma partida. Não há partidas jogáveis, regras, contas, IA ou multiplayer.
+
+A cena é construída com three.js + React Three Fiber: geometria, materiais e texturas são procedurais, e o ambiente de reflexão é pré-filtrado em tempo de execução. Sem WebGL, um pôster em CSS 3D preserva a composição.
 
 ## Início rápido
 
