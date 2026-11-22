@@ -1,6 +1,6 @@
 # CHESS CORE
 
-**The heart of chess.** Interface de uma futura plataforma de xadrez. A Fase 02 apresenta um painel visual, navegação e um tabuleiro estático, com dados fictícios identificados como demonstrativos. Não há partidas jogáveis, regras, contas, IA ou multiplayer.
+**The heart of chess.** Interface de uma futura plataforma de xadrez. A interface apresenta uma cena de xadrez pré-renderizada, navegação e configuração de partida demonstrativa; as escolhas não iniciam uma partida. Não há partidas jogáveis, regras, contas, IA ou multiplayer.
 
 ## Início rápido
 

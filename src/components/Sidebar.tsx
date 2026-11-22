@@ -7,7 +7,7 @@ export function Sidebar({ current, collapsed, mobileOpen, onCollapse, onClose }:
   return <>
     {mobileOpen && <button className="sidebar-backdrop" aria-label="Fechar menu" onClick={onClose} />}
     <aside className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''} ${mobileOpen ? 'sidebar--open' : ''}`}>
-      <div className="brand-row"><a className="brand" href="#/inicio" onClick={onClose} aria-label="CHESS CORE, início"><span className="brand-mark">♞</span><span className="brand-word">CHESS <strong>CORE</strong><small>THE HEART OF CHESS</small></span></a><button className="icon-button mobile-close" onClick={onClose} aria-label="Fechar menu"><X size={19} /></button></div>
+      <div className="brand-row"><a className="brand" href="#/inicio" onClick={onClose} aria-label="CHESS CORE, início"><span className="brand-mark" aria-hidden="true"><span /></span><span className="brand-word">CHESS <strong>CORE</strong><small>THE HEART OF CHESS</small></span></a><button className="icon-button mobile-close" onClick={onClose} aria-label="Fechar menu"><X size={19} /></button></div>
       <div className="side-caption">MENU PRINCIPAL</div>
       <nav aria-label="Navegação principal" className="side-nav">
         {pages.slice(0, 10).map((page) => <a className={`nav-link ${current === page.id ? 'active' : ''}`} href={`#/${page.id}`} key={page.id} onClick={onClose} aria-current={current === page.id ? 'page' : undefined} title={page.label}><page.icon size={18} strokeWidth={1.6} /><span>{page.label}</span>{current === page.id && <span className="active-dot" />}</a>)}
