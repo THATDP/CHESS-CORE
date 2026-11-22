@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Sidebar } from '../components/Sidebar';
-import { Topbar } from '../components/Topbar';
-import { pageForHash } from './navigation';
+import { Header } from '../components/Header';
+import { isMatchPage, pageForHash } from './navigation';
 import type { Page } from './navigation';
+import { useNavPreferences } from './preferences';
 import { Home } from '../pages/Home';
 import { Play } from '../pages/Play';
 import { Computer } from '../pages/Computer';
@@ -36,44 +36,29 @@ function renderPage(page: Page) {
 
 export function App() {
   const [page, setPage] = useState(() => pageForHash(window.location.hash));
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
+  const { compactMatches } = useNavPreferences();
 
   useEffect(() => {
     const update = () => {
       setPage(pageForHash(window.location.hash));
-      setProfileOpen(false);
       window.scrollTo?.(0, 0);
     };
     window.addEventListener('hashchange', update);
     return () => window.removeEventListener('hashchange', update);
   }, []);
 
+  const compact = compactMatches && isMatchPage(page.id);
+
   return (
-    <div className={`app-shell ${collapsed ? 'app-shell--collapsed' : ''}`}>
-      <Sidebar
-        current={page.id}
-        collapsed={collapsed}
-        mobileOpen={mobileOpen}
-        onCollapse={() => setCollapsed(!collapsed)}
-        onClose={() => setMobileOpen(false)}
-      />
-      <div className="app-main">
-        <Topbar
-          page={page}
-          onMenu={() => setMobileOpen(true)}
-          profileOpen={profileOpen}
-          onProfile={() => setProfileOpen(!profileOpen)}
-        />
-        <main className="content" key={page.id}>
-          {renderPage(page)}
-        </main>
-        <footer className="footer">
-          <span>© CHESS CORE <span aria-hidden="true">·</span> THE HEART OF CHESS.</span>
-          <span>PROJETADO PARA O SEU PRÓXIMO MOVIMENTO <span aria-hidden="true">✳</span></span>
-        </footer>
-      </div>
+    <div className="app-shell">
+      <Header page={page} compact={compact} />
+      <main className="content" key={page.id}>
+        {renderPage(page)}
+      </main>
+      <footer className="footer">
+        <span>© CHESS CORE <span aria-hidden="true">·</span> THE HEART OF CHESS.</span>
+        <span>PROJETADO PARA O SEU PRÓXIMO MOVIMENTO <span aria-hidden="true">✳</span></span>
+      </footer>
     </div>
   );
 }

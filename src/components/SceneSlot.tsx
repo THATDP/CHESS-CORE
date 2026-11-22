@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChessCanvasProps } from '../three/ChessCanvas';
 import { Scene } from './Scene';
+import { useSceneEnabled } from '../app/preferences';
 import { SceneFallback } from './SceneFallback';
 
 /**
@@ -9,6 +10,7 @@ import { SceneFallback } from './SceneFallback';
  * unavailable) the crafted poster carries the visual.
  */
 export function SceneSlot({ className = '', ...props }: ChessCanvasProps) {
+  const sceneEnabled = useSceneEnabled();
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(() => typeof IntersectionObserver === 'undefined');
 
@@ -32,7 +34,10 @@ export function SceneSlot({ className = '', ...props }: ChessCanvasProps) {
   return (
     <div ref={ref} className={`scene-slot ${className}`}>
       <SceneFallback variant={props.variant} />
-      {active && <Scene {...props} />}
+      {!sceneEnabled && (
+        <span className="scene-slot__note">Cena 3D desativada nas configurações.</span>
+      )}
+      {active && sceneEnabled && <Scene {...props} />}
     </div>
   );
 }
