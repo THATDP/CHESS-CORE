@@ -34,6 +34,7 @@ describe('etapa 2 · cabeçalho e dropdowns', () => {
 
     fireEvent.click(within(nav()).getByRole('button', { name: 'Treinar' }));
     const panel = document.getElementById('nav-panel-treinar');
+    if (!panel) throw new Error('O painel da categoria não abriu.');
     const current = within(panel).getByRole('link', { name: /Quebra-cabeças/ });
     expect(current.getAttribute('href')).toBe('#/quebra-cabecas');
     expect(current.getAttribute('aria-current')).toBe('page');
